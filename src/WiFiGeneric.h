@@ -99,6 +99,8 @@ class WiFiGenericClass
 
   protected:
     static bool _persistent;
+    static wifi_mode_t _wifi_mode;
+    static wifi_power_t _wifi_power;
     static wifi_mode_t _forceSleepLastMode;
 
     static int setStatusBits(int bits);
