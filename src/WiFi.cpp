@@ -21,71 +21,68 @@
 //  Reworked on 28 Dec 2015 by Markus Sattler
 
 //  */
-// #include "WiFi.h"
+#include "WiFi.h"
 
-// extern "C" {
-// #include <stdint.h>
-// #include <stdbool.h>
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <inttypes.h>
-// #include <string.h>
-// #include <esp_err.h>
-// #include <esp_wifi.h>
-// #include <esp_event_loop.h>
-// }
+extern "C" {
+#include <stdint.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include <string.h>
+}
 
 
-// // -----------------------------------------------------------------------------------------------------------------------
-// // ---------------------------------------------------------- Debug ------------------------------------------------------
-// // -----------------------------------------------------------------------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------- Debug ------------------------------------------------------
+// -----------------------------------------------------------------------------------------------------------------------
 
 
-// /**
-//  * Output WiFi settings to an object derived from Print interface (like Serial).
-//  * @param p Print interface
-//  */
-// void WiFiClass::printDiag(Print& p)
-// {
-//     const char* modes[] = { "NULL", "STA", "AP", "STA+AP" };
+/**
+ * Output WiFi settings to an object derived from Print interface (like Serial).
+ * @param p Print interface
+ */
+void WiFiClass::printDiag(Print& p)
+{
+    // const char* modes[] = { "NULL", "STA", "AP", "STA+AP" };
 
-//     wifi_mode_t mode;
-//     esp_wifi_get_mode(&mode);
+    // wifi_mode_t mode;
+    // esp_wifi_get_mode(&mode);
 
-//     uint8_t primaryChan;
-//     wifi_second_chan_t secondChan;
-//     esp_wifi_get_channel(&primaryChan, &secondChan);
+    // uint8_t primaryChan;
+    // wifi_second_chan_t secondChan;
+    // esp_wifi_get_channel(&primaryChan, &secondChan);
 
-//     p.print("Mode: ");
-//     p.println(modes[mode]);
+    // p.print("Mode: ");
+    // p.println(modes[mode]);
 
-//     p.print("Channel: ");
-//     p.println(primaryChan);
-//     /*
-//         p.print("AP id: ");
-//         p.println(wifi_station_get_current_ap_id());
+    // p.print("Channel: ");
+    // p.println(primaryChan);
+    // /*
+    //     p.print("AP id: ");
+    //     p.println(wifi_station_get_current_ap_id());
 
-//         p.print("Status: ");
-//         p.println(wifi_station_get_connect_status());
-//     */
+    //     p.print("Status: ");
+    //     p.println(wifi_station_get_connect_status());
+    // */
 
-//     wifi_config_t conf;
-//     esp_wifi_get_config(WIFI_IF_STA, &conf);
+    // wifi_config_t conf;
+    // esp_wifi_get_config(WIFI_IF_STA, &conf);
 
-//     const char* ssid = reinterpret_cast<const char*>(conf.sta.ssid);
-//     p.print("SSID (");
-//     p.print(strlen(ssid));
-//     p.print("): ");
-//     p.println(ssid);
+    // const char* ssid = reinterpret_cast<const char*>(conf.sta.ssid);
+    // p.print("SSID (");
+    // p.print(strlen(ssid));
+    // p.print("): ");
+    // p.println(ssid);
 
-//     const char* passphrase = reinterpret_cast<const char*>(conf.sta.password);
-//     p.print("Passphrase (");
-//     p.print(strlen(passphrase));
-//     p.print("): ");
-//     p.println(passphrase);
+    // const char* passphrase = reinterpret_cast<const char*>(conf.sta.password);
+    // p.print("Passphrase (");
+    // p.print(strlen(passphrase));
+    // p.print("): ");
+    // p.println(passphrase);
 
-//     p.print("BSSID set: ");
-//     p.println(conf.sta.bssid_set);
-// }
+    // p.print("BSSID set: ");
+    // p.println(conf.sta.bssid_set);
+}
 
-// WiFiClass WiFi;
+WiFiClass WiFi;

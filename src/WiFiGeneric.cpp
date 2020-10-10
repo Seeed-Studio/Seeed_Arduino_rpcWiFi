@@ -41,6 +41,9 @@ static xQueueHandle _network_event_queue;
 static TaskHandle_t _network_event_task_handle = NULL;
 static EventGroupHandle_t _network_event_group = NULL;
 
+wifi_mode_t WiFiGenericClass::_wifi_mode = WIFI_MODE_NULL;
+wifi_power_t WiFiGenericClass::_wifi_power = WIFI_POWER_19_5dBm;
+
 static void _network_event_task(void * arg){
     system_event_t *event = NULL;
     for (;;) {
@@ -98,6 +101,8 @@ void tcpipInit(){
 static bool lowLevelInitDone = false;
 static bool wifiLowLevelInit(bool persistent){
     if(!lowLevelInitDone){
+        tcpip_adapter_init();
+        wifi_on(WIFI_MODE_NULL);
         lowLevelInitDone = true;
     }
     return true;
@@ -105,7 +110,9 @@ static bool wifiLowLevelInit(bool persistent){
 
 static bool wifiLowLevelDeinit(){
     //deinit not working yet!
-    //esp_wifi_deinit();
+    wifi_off();
+    tcpip_adapter_stop(TCPIP_ADAPTER_IF_STA);
+    tcpip_adapter_stop(TCPIP_ADAPTER_IF_AP);
     return true;
 }
 
@@ -127,22 +134,15 @@ static bool espWiFiStart(bool persistent){
     return true;
 }
 
-static bool espWiFiStop(){
+static bool espWiFiStop()
+{
 
-    //TO DO
-    // esp_err_t err;
-    // if(!_esp_wifi_started){
-    //     return true;
-    // }
-    // _esp_wifi_started = false;
-    // err = wifi_stop();
-    // if(err){
-    //     log_e("Could not stop WiFi! %d", err);
-    //     _esp_wifi_started = true;
-    //     return false;
-    // }
-    // return wifiLowLevelDeinit();
-    return true;
+    if(!_esp_wifi_started){
+        return true;
+    }
+    _esp_wifi_started = false;
+
+    return wifiLowLevelDeinit();
 }
 
 // -----------------------------------------------------------------------------------------------------------------------
@@ -309,115 +309,115 @@ const char * system_event_reasons[] = { "UNSPECIFIED", "AUTH_EXPIRE", "AUTH_LEAV
 #endif
 esp_err_t WiFiGenericClass::_eventCallback(void *arg, system_event_t *event)
 {
-    if(event->event_id < 26) {
-        log_d("Event: %d - %s", event->event_id, system_event_names[event->event_id]);
-    }
-    if(event->event_id == SYSTEM_EVENT_SCAN_DONE) {
-        WiFiScanClass::_scanDone();
+//     if(event->event_id < 26) {
+//         log_d("Event: %d - %s", event->event_id, system_event_names[event->event_id]);
+//     }
+//     if(event->event_id == SYSTEM_EVENT_SCAN_DONE) {
+//         WiFiScanClass::_scanDone();
 
-    } else if(event->event_id == SYSTEM_EVENT_STA_START) {
-        WiFiSTAClass::_setStatus(WL_DISCONNECTED);
-        setStatusBits(STA_STARTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_STA_STOP) {
-        WiFiSTAClass::_setStatus(WL_NO_SHIELD);
-        clearStatusBits(STA_STARTED_BIT | STA_CONNECTED_BIT | STA_HAS_IP_BIT | STA_HAS_IP6_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_STA_CONNECTED) {
-        WiFiSTAClass::_setStatus(WL_IDLE_STATUS);
-        setStatusBits(STA_CONNECTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_STA_DISCONNECTED) {
-        uint8_t reason = event->event_info.disconnected.reason;
-        log_w("Reason: %u - %s", reason, reason2str(reason));
-        if(reason == WIFI_REASON_NO_AP_FOUND) {
-            WiFiSTAClass::_setStatus(WL_NO_SSID_AVAIL);
-        } else if(reason == WIFI_REASON_AUTH_FAIL || reason == WIFI_REASON_ASSOC_FAIL) {
-            WiFiSTAClass::_setStatus(WL_CONNECT_FAILED);
-        } else if(reason == WIFI_REASON_BEACON_TIMEOUT || reason == WIFI_REASON_HANDSHAKE_TIMEOUT) {
-            WiFiSTAClass::_setStatus(WL_CONNECTION_LOST);
-        } else if(reason == WIFI_REASON_AUTH_EXPIRE) {
+//     } else if(event->event_id == SYSTEM_EVENT_STA_START) {
+//         WiFiSTAClass::_setStatus(WL_DISCONNECTED);
+//         setStatusBits(STA_STARTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_STA_STOP) {
+//         WiFiSTAClass::_setStatus(WL_NO_SHIELD);
+//         clearStatusBits(STA_STARTED_BIT | STA_CONNECTED_BIT | STA_HAS_IP_BIT | STA_HAS_IP6_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_STA_CONNECTED) {
+//         WiFiSTAClass::_setStatus(WL_IDLE_STATUS);
+//         setStatusBits(STA_CONNECTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_STA_DISCONNECTED) {
+//         uint8_t reason = event->event_info.disconnected.reason;
+//         log_w("Reason: %u - %s", reason, reason2str(reason));
+//         if(reason == WIFI_REASON_NO_AP_FOUND) {
+//             WiFiSTAClass::_setStatus(WL_NO_SSID_AVAIL);
+//         } else if(reason == WIFI_REASON_AUTH_FAIL || reason == WIFI_REASON_ASSOC_FAIL) {
+//             WiFiSTAClass::_setStatus(WL_CONNECT_FAILED);
+//         } else if(reason == WIFI_REASON_BEACON_TIMEOUT || reason == WIFI_REASON_HANDSHAKE_TIMEOUT) {
+//             WiFiSTAClass::_setStatus(WL_CONNECTION_LOST);
+//         } else if(reason == WIFI_REASON_AUTH_EXPIRE) {
 
-        } else {
-            WiFiSTAClass::_setStatus(WL_DISCONNECTED);
-        }
-        clearStatusBits(STA_CONNECTED_BIT | STA_HAS_IP_BIT | STA_HAS_IP6_BIT);
-        if(((reason == WIFI_REASON_AUTH_EXPIRE) ||
-            (reason >= WIFI_REASON_BEACON_TIMEOUT && reason != WIFI_REASON_AUTH_FAIL)) &&
-            WiFi.getAutoReconnect())
-        {
-            WiFi.disconnect();
-            WiFi.begin();
-        }
-    } else if(event->event_id == SYSTEM_EVENT_STA_GOT_IP) {
-#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_DEBUG
-        uint8_t * ip = (uint8_t *)&(event->event_info.got_ip.ip_info.ip.addr);
-        uint8_t * mask = (uint8_t *)&(event->event_info.got_ip.ip_info.netmask.addr);
-        uint8_t * gw = (uint8_t *)&(event->event_info.got_ip.ip_info.gw.addr);
-        log_d("STA IP: %u.%u.%u.%u, MASK: %u.%u.%u.%u, GW: %u.%u.%u.%u",
-            ip[0], ip[1], ip[2], ip[3],
-            mask[0], mask[1], mask[2], mask[3],
-            gw[0], gw[1], gw[2], gw[3]);
-#endif
-        WiFiSTAClass::_setStatus(WL_CONNECTED);
-        setStatusBits(STA_HAS_IP_BIT | STA_CONNECTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_STA_LOST_IP) {
-        WiFiSTAClass::_setStatus(WL_IDLE_STATUS);
-        clearStatusBits(STA_HAS_IP_BIT);
+//         } else {
+//             WiFiSTAClass::_setStatus(WL_DISCONNECTED);
+//         }
+//         clearStatusBits(STA_CONNECTED_BIT | STA_HAS_IP_BIT | STA_HAS_IP6_BIT);
+//         if(((reason == WIFI_REASON_AUTH_EXPIRE) ||
+//             (reason >= WIFI_REASON_BEACON_TIMEOUT && reason != WIFI_REASON_AUTH_FAIL)) &&
+//             WiFi.getAutoReconnect())
+//         {
+//             WiFi.disconnect();
+//             WiFi.begin();
+//         }
+//     } else if(event->event_id == SYSTEM_EVENT_STA_GOT_IP) {
+// #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_DEBUG
+//         uint8_t * ip = (uint8_t *)&(event->event_info.got_ip.ip_info.ip.addr);
+//         uint8_t * mask = (uint8_t *)&(event->event_info.got_ip.ip_info.netmask.addr);
+//         uint8_t * gw = (uint8_t *)&(event->event_info.got_ip.ip_info.gw.addr);
+//         log_d("STA IP: %u.%u.%u.%u, MASK: %u.%u.%u.%u, GW: %u.%u.%u.%u",
+//             ip[0], ip[1], ip[2], ip[3],
+//             mask[0], mask[1], mask[2], mask[3],
+//             gw[0], gw[1], gw[2], gw[3]);
+// #endif
+//         WiFiSTAClass::_setStatus(WL_CONNECTED);
+//         setStatusBits(STA_HAS_IP_BIT | STA_CONNECTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_STA_LOST_IP) {
+//         WiFiSTAClass::_setStatus(WL_IDLE_STATUS);
+//         clearStatusBits(STA_HAS_IP_BIT);
 
-    } else if(event->event_id == SYSTEM_EVENT_AP_START) {
-        setStatusBits(AP_STARTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_AP_STOP) {
-        clearStatusBits(AP_STARTED_BIT | AP_HAS_CLIENT_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_AP_STACONNECTED) {
-        setStatusBits(AP_HAS_CLIENT_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_AP_STADISCONNECTED) {
-        wifi_sta_list_t clients;
-        if(esp_wifi_ap_get_sta_list(&clients) != ESP_OK || !clients.num){
-            clearStatusBits(AP_HAS_CLIENT_BIT);
-        }
+//     } else if(event->event_id == SYSTEM_EVENT_AP_START) {
+//         setStatusBits(AP_STARTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_AP_STOP) {
+//         clearStatusBits(AP_STARTED_BIT | AP_HAS_CLIENT_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_AP_STACONNECTED) {
+//         setStatusBits(AP_HAS_CLIENT_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_AP_STADISCONNECTED) {
+//         wifi_sta_list_t clients;
+//         if(esp_wifi_ap_get_sta_list(&clients) != ESP_OK || !clients.num){
+//             clearStatusBits(AP_HAS_CLIENT_BIT);
+//         }
 
-    } else if(event->event_id == SYSTEM_EVENT_ETH_START) {
-        setStatusBits(ETH_STARTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_ETH_STOP) {
-        clearStatusBits(ETH_STARTED_BIT | ETH_CONNECTED_BIT | ETH_HAS_IP_BIT | ETH_HAS_IP6_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_ETH_CONNECTED) {
-        setStatusBits(ETH_CONNECTED_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_ETH_DISCONNECTED) {
-        clearStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP_BIT | ETH_HAS_IP6_BIT);
-    } else if(event->event_id == SYSTEM_EVENT_ETH_GOT_IP) {
-#if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_DEBUG
-        uint8_t * ip = (uint8_t *)&(event->event_info.got_ip.ip_info.ip.addr);
-        uint8_t * mask = (uint8_t *)&(event->event_info.got_ip.ip_info.netmask.addr);
-        uint8_t * gw = (uint8_t *)&(event->event_info.got_ip.ip_info.gw.addr);
-        log_d("ETH IP: %u.%u.%u.%u, MASK: %u.%u.%u.%u, GW: %u.%u.%u.%u",
-            ip[0], ip[1], ip[2], ip[3],
-            mask[0], mask[1], mask[2], mask[3],
-            gw[0], gw[1], gw[2], gw[3]);
-#endif
-        setStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_ETH_START) {
+//         setStatusBits(ETH_STARTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_ETH_STOP) {
+//         clearStatusBits(ETH_STARTED_BIT | ETH_CONNECTED_BIT | ETH_HAS_IP_BIT | ETH_HAS_IP6_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_ETH_CONNECTED) {
+//         setStatusBits(ETH_CONNECTED_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_ETH_DISCONNECTED) {
+//         clearStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP_BIT | ETH_HAS_IP6_BIT);
+//     } else if(event->event_id == SYSTEM_EVENT_ETH_GOT_IP) {
+// #if ARDUHAL_LOG_LEVEL >= ARDUHAL_LOG_LEVEL_DEBUG
+//         uint8_t * ip = (uint8_t *)&(event->event_info.got_ip.ip_info.ip.addr);
+//         uint8_t * mask = (uint8_t *)&(event->event_info.got_ip.ip_info.netmask.addr);
+//         uint8_t * gw = (uint8_t *)&(event->event_info.got_ip.ip_info.gw.addr);
+//         log_d("ETH IP: %u.%u.%u.%u, MASK: %u.%u.%u.%u, GW: %u.%u.%u.%u",
+//             ip[0], ip[1], ip[2], ip[3],
+//             mask[0], mask[1], mask[2], mask[3],
+//             gw[0], gw[1], gw[2], gw[3]);
+// #endif
+//         setStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP_BIT);
 
-    } else if(event->event_id == SYSTEM_EVENT_GOT_IP6) {
-        if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_AP){
-            setStatusBits(AP_HAS_IP6_BIT);
-        } else if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_STA){
-            setStatusBits(STA_CONNECTED_BIT | STA_HAS_IP6_BIT);
-        } else if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_ETH){
-            setStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP6_BIT);
-        }
-    }
+//     } else if(event->event_id == SYSTEM_EVENT_GOT_IP6) {
+//         if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_AP){
+//             setStatusBits(AP_HAS_IP6_BIT);
+//         } else if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_STA){
+//             setStatusBits(STA_CONNECTED_BIT | STA_HAS_IP6_BIT);
+//         } else if(event->event_info.got_ip6.if_index == TCPIP_ADAPTER_IF_ETH){
+//             setStatusBits(ETH_CONNECTED_BIT | ETH_HAS_IP6_BIT);
+//         }
+//     }
 
-    for(uint32_t i = 0; i < cbEventList.size(); i++) {
-        WiFiEventCbList_t entry = cbEventList[i];
-        if(entry.cb || entry.fcb || entry.scb) {
-            if(entry.event == (system_event_id_t) event->event_id || entry.event == SYSTEM_EVENT_MAX) {
-                if(entry.cb) {
-                    entry.cb((system_event_id_t) event->event_id);
-                } else if(entry.fcb) {
-                    entry.fcb((system_event_id_t) event->event_id, (system_event_info_t) event->event_info);
-                } else {
-                    entry.scb(event);
-                }
-            }
-        }
-    }
+//     for(uint32_t i = 0; i < cbEventList.size(); i++) {
+//         WiFiEventCbList_t entry = cbEventList[i];
+//         if(entry.cb || entry.fcb || entry.scb) {
+//             if(entry.event == (system_event_id_t) event->event_id || entry.event == SYSTEM_EVENT_MAX) {
+//                 if(entry.cb) {
+//                     entry.cb((system_event_id_t) event->event_id);
+//                 } else if(entry.fcb) {
+//                     entry.fcb((system_event_id_t) event->event_id, (system_event_info_t) event->event_info);
+//                 } else {
+//                     entry.scb(event);
+//                 }
+//             }
+//         }
+//     }
     return ESP_OK;
 }
 
@@ -466,11 +466,14 @@ bool WiFiGenericClass::mode(wifi_mode_t m)
         return espWiFiStop();
     }
     esp_err_t err;
-    err = wifi_set_mode(m);
+    wifi_off();
+    vTaskDelay(20);
+    err = wifi_on(m);
     if(err){
         log_e("Could not set mode! %d", err);
         return false;
     }
+    _wifi_mode = m;
     return true;
 }
 
