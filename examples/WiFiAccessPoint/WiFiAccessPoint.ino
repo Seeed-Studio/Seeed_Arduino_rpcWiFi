@@ -18,16 +18,18 @@
 #define LED_BUILTIN 2   // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED
 
 // Set these to your desired credentials.
-const char *ssid = "yourAP";
-const char *password = "yourPassword";
+const char *ssid = "Wio Terminal";
+const char *password = "123456789";
 
-WiFiServer server(80);
+//WiFiServer server(80);
 
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   Serial.begin(115200);
+  while(!Serial){};
+  delay(2000);
   Serial.println();
   Serial.println("Configuring access point...");
 
@@ -36,12 +38,28 @@ void setup() {
   IPAddress myIP = WiFi.softAPIP();
   Serial.print("AP IP address: ");
   Serial.println(myIP);
-  server.begin();
 
-  Serial.println("Server started");
+  IPAddress broadcastIP = WiFi.softAPBroadcastIP();
+  Serial.print("BroadcastIP IP address: ");
+  Serial.println(broadcastIP);
+
+  
+  uint8_t myMac[6];
+  WiFi.softAPmacAddress(myMac);
+  Serial.print("AP mac address: ");
+  for(int i = 0; i < 6; i++)
+  {
+     Serial.printf("%x:", myMac[i]);
+  }
+  Serial.println(' ');
+  Serial.print("AP mac address: ");
+  Serial.println(WiFi.softAPmacAddress());
+
 }
 
 void loop() {
+  Serial.printf("sta num: :%d\n\r", WiFi.softAPgetStationNum());
+  delay(5000);
 //   WiFiClient client = server.available();   // listen for incoming clients
 
 //   if (client) {                             // if you get a client,
@@ -90,4 +108,4 @@ void loop() {
 //     client.stop();
 //     Serial.println("Client Disconnected.");
 //   }
-// }
+}

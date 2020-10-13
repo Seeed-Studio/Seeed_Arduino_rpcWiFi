@@ -35,6 +35,7 @@ extern "C"
 #include <inttypes.h>
 #include <string.h>
 }
+#define MAX_STA_CONNECT_NUM 10
 
 // -----------------------------------------------------------------------------------------------------------------------
 // ----------------------------------------------------- AP function -----------------------------------------------------
@@ -95,9 +96,9 @@ bool WiFiAPClass::softAP(const char *ssid, const char *passphrase, int channel, 
             return false;
         }
     }
-    IPAddress  local_ip(192, 168, 1, 1);
-    IPAddress  gateway(192,168,1,1);
-    IPAddress  subnet(255, 255, 255, 0);
+    IPAddress local_ip(192, 168, 1, 1);
+    IPAddress gateway(192, 168, 1, 1);
+    IPAddress subnet(255, 255, 255, 0);
     softAPConfig(local_ip, gateway, subnet);
     return true;
 }
@@ -181,9 +182,19 @@ uint8_t WiFiAPClass::softAPgetStationNum()
     {
         return 0;
     }
-    // if(esp_wifi_ap_get_sta_list(&clients) == ESP_OK) {
-    //     return clients.num;
-    // }
+
+    struct
+    {
+        int count;
+        rtw_mac_t mac_list[MAX_STA_CONNECT_NUM];
+    } client_info;
+
+    client_info.count = MAX_STA_CONNECT_NUM;
+
+    if (wifi_get_associated_client_list(&client_info, sizeof(client_info)) == RTW_SUCCESS)
+    {
+        return client_info.count;
+    }
     return 0;
 }
 
@@ -248,6 +259,33 @@ uint8_t WiFiAPClass::softAPSubnetCIDR()
     return WiFiGenericClass::calculateSubnetCIDR(IPAddress(ip.netmask.addr));
 }
 
+
+static int htoi(const char *s)
+{
+    int i;
+    int n = 0;
+    if (s[0] == '0' && (s[1]=='x' || s[1]=='X'))
+    {
+        i = 2;
+    }
+    else
+    {
+        i = 0;
+    }
+    for (; (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >='A' && s[i] <= 'Z');++i)
+    {
+        if (tolower(s[i]) > '9')
+        {
+            n = 16 * n + (10 + tolower(s[i]) - 'a');
+        }
+        else
+        {
+            n = 16 * n + (tolower(s[i]) - '0');
+        }
+    }
+    return n;
+}
+
 /**
  * Get the softAP interface MAC address.
  * @param mac   pointer to uint8_t array with length WL_MAC_ADDR_LENGTH
@@ -257,7 +295,11 @@ uint8_t *WiFiAPClass::softAPmacAddress(uint8_t *mac)
 {
     if (WiFiGenericClass::getMode() != WIFI_MODE_NULL)
     {
-        esp_wifi_get_mac(WIFI_IF_AP, mac);
+        String macStr = softAPmacAddress();
+        for (int i = 0; i < 6; i++)
+        {
+            mac[i] = (uint8_t)htoi(macStr.substring(i * 3, i * 3 + 2).c_str());
+        }
     }
     return mac;
 }
@@ -274,9 +316,9 @@ String WiFiAPClass::softAPmacAddress(void)
     {
         return String();
     }
-    esp_wifi_get_mac(WIFI_IF_AP, mac);
+    tcpip_adapter_get_mac(TCPIP_ADAPTER_IF_AP, (uint8_t *)macStr);
 
-    sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
+    //sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return String(macStr);
 }
 
