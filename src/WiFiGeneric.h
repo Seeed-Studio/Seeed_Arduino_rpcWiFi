@@ -27,6 +27,8 @@
 #include <functional>
 #include "WiFiType.h"
 
+int htoi(const char *s);
+
 typedef void (*WiFiEventCb)(system_event_id_t event);
 typedef std::function<void(system_event_id_t event, system_event_info_t info)> WiFiEventFuncCb;
 typedef void (*WiFiEventSysCb)(system_event_t *event);

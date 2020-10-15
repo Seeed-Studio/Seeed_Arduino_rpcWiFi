@@ -29,8 +29,8 @@ void setup()
     Serial.print("Connecting to ");
     Serial.println(ssid);
 
-    WiFi.begin(ssid, password);
-
+    //WiFi.begin(ssid, password);
+    WiFi.begin();
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
@@ -47,6 +47,10 @@ void loop()
     Serial.println("WiFi connected");
     Serial.println("IP address: ");
     Serial.println(WiFi.localIP());
+    Serial.println("AP BSSID: ");
+    Serial.println(WiFi.BSSIDstr());
+    Serial.println("AP RSSI: ");
+    Serial.println(WiFi.RSSI());
     // delay(5000);
     // ++value;
 

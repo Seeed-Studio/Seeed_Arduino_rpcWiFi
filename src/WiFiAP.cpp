@@ -259,33 +259,6 @@ uint8_t WiFiAPClass::softAPSubnetCIDR()
     return WiFiGenericClass::calculateSubnetCIDR(IPAddress(ip.netmask.addr));
 }
 
-
-static int htoi(const char *s)
-{
-    int i;
-    int n = 0;
-    if (s[0] == '0' && (s[1]=='x' || s[1]=='X'))
-    {
-        i = 2;
-    }
-    else
-    {
-        i = 0;
-    }
-    for (; (s[i] >= '0' && s[i] <= '9') || (s[i] >= 'a' && s[i] <= 'z') || (s[i] >='A' && s[i] <= 'Z');++i)
-    {
-        if (tolower(s[i]) > '9')
-        {
-            n = 16 * n + (10 + tolower(s[i]) - 'a');
-        }
-        else
-        {
-            n = 16 * n + (tolower(s[i]) - '0');
-        }
-    }
-    return n;
-}
-
 /**
  * Get the softAP interface MAC address.
  * @param mac   pointer to uint8_t array with length WL_MAC_ADDR_LENGTH
@@ -310,7 +283,6 @@ uint8_t *WiFiAPClass::softAPmacAddress(uint8_t *mac)
  */
 String WiFiAPClass::softAPmacAddress(void)
 {
-    uint8_t mac[6];
     char macStr[18] = {0};
     if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
     {
@@ -318,7 +290,6 @@ String WiFiAPClass::softAPmacAddress(void)
     }
     tcpip_adapter_get_mac(TCPIP_ADAPTER_IF_AP, (uint8_t *)macStr);
 
-    //sprintf(macStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return String(macStr);
 }
 
