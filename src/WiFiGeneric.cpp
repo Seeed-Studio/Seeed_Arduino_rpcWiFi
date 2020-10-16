@@ -131,6 +131,16 @@ static bool wifiLowLevelInit(bool persistent)
 {
     if (!lowLevelInitDone)
     {
+        if (!_network_event_group)
+        {
+            _network_event_group = xEventGroupCreate();
+            if (!_network_event_group)
+            {
+                log_e("Network Event Group Create Failed!");
+                return false;
+            }
+            xEventGroupSetBits(_network_event_group, WIFI_DNS_IDLE_BIT);
+        }
         tcpip_adapter_init();
         system_event_callback_reg(WiFiGenericClass::_eventCallback);
         lowLevelInitDone = true;
@@ -144,17 +154,6 @@ static bool wifiLowLevelDeinit()
     wifi_off();
     tcpip_adapter_stop(TCPIP_ADAPTER_IF_STA);
     tcpip_adapter_stop(TCPIP_ADAPTER_IF_AP);
-
-    if (!_network_event_group)
-    {
-        _network_event_group = xEventGroupCreate();
-        if (!_network_event_group)
-        {
-            log_e("Network Event Group Create Failed!");
-            return false;
-        }
-        xEventGroupSetBits(_network_event_group, WIFI_DNS_IDLE_BIT);
-    }
 
     return true;
 }
@@ -381,7 +380,7 @@ esp_err_t WiFiGenericClass::_eventCallback(void *arg, system_event_t *event)
     }
     if (event->event_id == SYSTEM_EVENT_SCAN_DONE)
     {
-        //WiFiScanClass::_scanDone();
+        WiFiScanClass::_scanDone();
     }
     else if (event->event_id == SYSTEM_EVENT_STA_START)
     {
