@@ -115,7 +115,7 @@ wl_status_t WiFiSTAClass::begin(const char *ssid, const char *passphrase, int32_
         security_type = RTW_SECURITY_WPA2_AES_PSK;
     }
 
-    if (channel != 0)
+    if (channel != 0 && bssid == NULL)
     {
         pscan_config = PSCAN_ENABLE | PSCAN_FAST_SURVEY;
         ret = wifi_set_pscan_chan((uint8_t *)&channel, &pscan_config, 1);
@@ -597,10 +597,11 @@ String WiFiSTAClass::SSID() const
     {
         return String();
     }
-    wifi_ap_record_t info;
-    if (!esp_wifi_sta_get_ap_info(&info))
+    rtw_bss_info_t ap_info;
+    rtw_security_t security;
+    if (!wifi_get_ap_info(&ap_info, &security))
     {
-        return String(reinterpret_cast<char *>(info.ssid));
+        return String(reinterpret_cast<char *>(ap_info.SSID));
     }
     return String();
 }
