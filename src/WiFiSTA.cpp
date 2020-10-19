@@ -34,6 +34,8 @@ extern "C"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include "lwip/err.h"
+#include "lwip/dns.h"
 }
 
 // -----------------------------------------------------------------------------------------------------------------------
