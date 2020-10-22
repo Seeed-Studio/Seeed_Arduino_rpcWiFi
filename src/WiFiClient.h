@@ -103,6 +103,7 @@ public:
 
     //friend class WiFiServer;
     using Print::write;
+    uint32_t conn_staus; // Check the connection status every 3S 
 };
 
 #endif /* _WIFICLIENT_H_ */

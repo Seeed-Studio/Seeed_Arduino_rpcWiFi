@@ -25,6 +25,7 @@
 #define WIFI_CLIENT_MAX_WRITE_RETRY   (10)
 #define WIFI_CLIENT_SELECT_TIMEOUT_US (1000000)
 #define WIFI_CLIENT_FLUSH_BUFFER_SIZE (1024)
+#define WIFI_CLIENT_KEEPALIVE_TIMEOUT (500)
 
 #undef connect
 #undef write
@@ -265,6 +266,7 @@ int WiFiClient::connect(IPAddress ip, uint16_t port, int32_t timeout)
     fcntl( sockfd, F_SETFL, fcntl( sockfd, F_GETFL, 0 ) & (~O_NONBLOCK) );
     clientSocketHandle.reset(new WiFiClientSocketHandle(sockfd));
     _rxBuffer.reset(new WiFiClientRxBuffer(sockfd));
+    conn_staus = millis();
     _connected = true;
     return 1;
 }
@@ -491,14 +493,16 @@ void WiFiClient::flush() {
 
 uint8_t WiFiClient::connected()
 {
-    if (_connected) {
+    uint32_t interval = millis() - conn_staus;
+    if (_connected && interval > WIFI_CLIENT_KEEPALIVE_TIMEOUT) {
         uint8_t dummy;
-        int res = recv(fd(), &dummy, 1, MSG_PEEK);
+        int res = recv(fd(), &dummy, 0, MSG_DONTWAIT);
         // avoid unused var warning by gcc
         (void)res;
         switch (errno) {
             case EWOULDBLOCK:
             case ENOENT: //caused by vfs
+                conn_staus = millis();
                 _connected = true;
                 break;
             case ENOTCONN:
@@ -511,6 +515,7 @@ uint8_t WiFiClient::connected()
                 break;
             default:
                 log_i("Unexpected: RES: %d, ERR: %d", res, errno);
+                conn_staus = millis();
                 _connected = true;
                 break;
         }
