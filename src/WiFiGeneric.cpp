@@ -33,6 +33,10 @@ extern "C"
 #include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
+#include "lwip/ip_addr.h"
+#include "lwip/opt.h"
+#include "lwip/err.h"
+#include "lwip/dns.h"
 } //extern "C"
 
 #include <vector>
@@ -728,6 +732,7 @@ static void wifi_dns_found_callback(const char *name, const ip_addr_t *ipaddr, v
     if (ipaddr)
     {
         (*reinterpret_cast<IPAddress *>(callback_arg)) = ipaddr->u_addr.ip4.addr;
+        Serial.printf("ip4:%d\n\r", ipaddr->u_addr.ip4.addr);
     }
     xEventGroupSetBits(_network_event_group, WIFI_DNS_DONE_BIT);
 }
@@ -741,7 +746,21 @@ static void wifi_dns_found_callback(const char *name, const ip_addr_t *ipaddr, v
  */
 int WiFiGenericClass::hostByName(const char *aHostname, IPAddress &aResult)
 {
-    //TODO
+    ip_addr_t addr;
+    aResult = static_cast<uint32_t>(0);
+    waitStatusBits(WIFI_DNS_IDLE_BIT, 5000);
+    clearStatusBits(WIFI_DNS_IDLE_BIT);
+    err_t err = dns_gethostbyname(aHostname, &addr, &wifi_dns_found_callback, &aResult);
+    if(err == ERR_OK && addr.u_addr.ip4.addr) {
+        aResult = addr.u_addr.ip4.addr;
+    } else if(err == ERR_INPROGRESS) {
+        waitStatusBits(WIFI_DNS_DONE_BIT, 4000);
+        clearStatusBits(WIFI_DNS_DONE_BIT);
+    }
+    setStatusBits(WIFI_DNS_IDLE_BIT);
+    if((uint32_t)aResult == 0){
+        log_e("DNS Failed for %s", aHostname);
+    }
     return (uint32_t)aResult != 0;
 }
 
