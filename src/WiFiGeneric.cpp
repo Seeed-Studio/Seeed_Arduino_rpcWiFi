@@ -732,7 +732,6 @@ static void wifi_dns_found_callback(const char *name, const ip_addr_t *ipaddr, v
     if (ipaddr)
     {
         (*reinterpret_cast<IPAddress *>(callback_arg)) = ipaddr->u_addr.ip4.addr;
-        Serial.printf("ip4:%d\n\r", ipaddr->u_addr.ip4.addr);
     }
     xEventGroupSetBits(_network_event_group, WIFI_DNS_DONE_BIT);
 }
