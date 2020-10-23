@@ -13,6 +13,7 @@ WiFi	KEYWORD3
 #######################################
 
 WiFi	KEYWORD1
+rpcWiFi	KEYWORD1
 WiFiClient	KEYWORD1
 WiFiServer	KEYWORD1
 WiFiUDP	KEYWORD1
