@@ -45,7 +45,8 @@ private:
             if(_fd < 0){
                 return 0;
             }
-            int res = lwip_available(_fd);
+            uint8_t dummy;
+            int res = recv(_fd, &dummy, 1, MSG_PEEK);
             if(res < 0) {
                 _failed = true;
                 return 0;
@@ -82,7 +83,7 @@ private:
         }
 
 public:
-    WiFiClientRxBuffer(int fd, size_t size=1024)
+    WiFiClientRxBuffer(int fd, size_t size=1436)
         :_size(size)
         ,_buffer(NULL)
         ,_pos(0)
