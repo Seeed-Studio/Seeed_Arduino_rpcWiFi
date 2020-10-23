@@ -413,21 +413,21 @@ bool WiFiSTAClass::getAutoConnect()
 
 bool WiFiSTAClass::setAutoReconnect(bool autoReconnect)
 {
-    _autoReconnect = autoReconnect;
-    // return true;
-    bool ret;
-    ret = (wifi_set_autoreconnect(autoReconnect) == 0);
-    return ret;
+    // _autoReconnect = autoReconnect;
+    // // return true;
+    // bool ret;
+    // ret = (wifi_set_autoreconnect(autoReconnect) == 0);
+    return false;
 }
 
 bool WiFiSTAClass::getAutoReconnect()
 {
-    //return _autoReconnect;
-    bool autoReconnect;
-    uint8_t mode = 0;
-    wifi_get_autoreconnect(&mode);
-    autoReconnect = (mode == 1);
-    return autoReconnect;
+    // //return _autoReconnect;
+    // bool autoReconnect;
+    // uint8_t mode = 0;
+    // wifi_get_autoreconnect(&mode);
+    // autoReconnect = (mode == 1);
+    return false;
 }
 
 /**

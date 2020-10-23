@@ -83,7 +83,7 @@ private:
         }
 
 public:
-    WiFiClientRxBuffer(int fd, size_t size=1436)
+    WiFiClientRxBuffer(int fd, size_t size=1024)
         :_size(size)
         ,_buffer(NULL)
         ,_pos(0)
