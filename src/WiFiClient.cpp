@@ -45,8 +45,7 @@ private:
             if(_fd < 0){
                 return 0;
             }
-            uint8_t dummy;
-            int res = recv(_fd, &dummy, 1, MSG_PEEK);
+            int res = lwip_available(_fd);
             if(res < 0) {
                 _failed = true;
                 return 0;

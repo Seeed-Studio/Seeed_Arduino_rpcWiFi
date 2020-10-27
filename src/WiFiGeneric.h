@@ -23,7 +23,8 @@
 #ifndef ESP32WIFIGENERIC_H_
 #define ESP32WIFIGENERIC_H_
 
-#include "Seeed_erpcUnified.h"
+#include "seeed_rpcUnified.h"
+#include "rtl_wifi/wifi_unified.h"
 #include <functional>
 #include "WiFiType.h"
 
