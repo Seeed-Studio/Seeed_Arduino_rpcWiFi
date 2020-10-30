@@ -51,7 +51,7 @@ private:
             _failed = true;
             return 0;
         }
-        return res;
+        return _fill - _pos;
     }
 
     size_t fillBuffer()
@@ -218,6 +218,7 @@ void WiFiClientSecure::stop()
     if (sslclient != NULL)
     {
         ssl_client_destroy(sslclient);
+        sslclient = NULL;
     }
 }
 
