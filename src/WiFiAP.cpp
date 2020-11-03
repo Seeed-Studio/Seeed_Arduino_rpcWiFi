@@ -51,6 +51,7 @@ extern "C"
 */
 bool WiFiAPClass::softAP(const char *ssid, const char *passphrase, int channel, int ssid_hidden, int max_connection)
 {
+    //passphrase = NULL;
     if (!WiFi.enableAP(true))
     {
         // enable AP failed
@@ -65,7 +66,7 @@ bool WiFiAPClass::softAP(const char *ssid, const char *passphrase, int channel, 
         return false;
     }
 
-    if (passphrase && (strlen(passphrase) > 0 && strlen(passphrase) < 8))
+    if ((passphrase != NULL) && strlen(passphrase) > 0 && strlen(passphrase) < 8)
     {
         // fail passphrase too short
         log_e("passphrase too short!");
@@ -96,12 +97,93 @@ bool WiFiAPClass::softAP(const char *ssid, const char *passphrase, int channel, 
             return false;
         }
     }
-    IPAddress local_ip(192, 168, 1, 1);
-    IPAddress gateway(192, 168, 1, 1);
-    IPAddress subnet(255, 255, 255, 0);
-    softAPConfig(local_ip, gateway, subnet);
+    tcpip_adapter_ip_info_t info;
+    info.ip.addr = static_cast<uint32_t>(_local_ip);
+    info.gw.addr = static_cast<uint32_t>(_gateway);
+    info.netmask.addr = static_cast<uint32_t>(_subnet);
+    tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
+    if (tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_AP, &info) == ESP_OK)
+    {
+        dhcps_lease_t lease;
+        lease.enable = true;
+        lease.start_ip.addr = static_cast<uint32_t>(_local_ip) + (1 << 24);
+        lease.end_ip.addr = static_cast<uint32_t>(_local_ip) + (11 << 24);
+
+        tcpip_adapter_dhcps_option(
+            (tcpip_adapter_option_mode_t)TCPIP_ADAPTER_OP_SET,
+            (tcpip_adapter_option_id_t)TCPIP_ADAPTER_REQUESTED_IP_ADDRESS,
+            (void *)&lease, sizeof(dhcps_lease_t));
+
+        return tcpip_adapter_dhcps_start(TCPIP_ADAPTER_IF_AP) == ESP_OK;
+    }
     return true;
 }
+
+
+/**
+ * Set up an access point
+ * @param ssid              Pointer to the SSID (max 63 char).
+ * @param passphrase        (for WPA2 min 8 char, for open use NULL)
+ * @param channel           WiFi channel number, 1 - 13.
+ * @param ssid_hidden       Network cloaking (0 = broadcast SSID, 1 = hide SSID)
+ * @param max_connection    Max simultaneous connected clients, 1 - 4.
+*/
+bool WiFiAPClass::softAP(const char *ssid, int channel, int ssid_hidden, int max_connection)
+{
+    //passphrase = NULL;
+    if (!WiFi.enableAP(true))
+    {
+        // enable AP failed
+        log_e("enable AP first!");
+        return false;
+    }
+
+    if (!ssid || *ssid == 0)
+    {
+        // fail SSID missing
+        log_e("SSID missing!");
+        return false;
+    }
+
+    rtw_security_t authmode = RTW_SECURITY_OPEN;
+   
+    if (ssid_hidden)
+    {
+        if (RTW_SUCCESS != wifi_start_ap_with_hidden_ssid((char *)ssid, authmode, NULL, strlen(ssid), 0, channel))
+        {
+            return false;
+        }
+    }
+    else
+    {
+        if (RTW_SUCCESS != wifi_start_ap((char *)ssid, authmode, NULL, strlen(ssid), 0, channel))
+        {
+            return false;
+        }
+    }
+    tcpip_adapter_ip_info_t info;
+    info.ip.addr = static_cast<uint32_t>(_local_ip);
+    info.gw.addr = static_cast<uint32_t>(_gateway);
+    info.netmask.addr = static_cast<uint32_t>(_subnet);
+    tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
+    if (tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_AP, &info) == ESP_OK)
+    {
+        dhcps_lease_t lease;
+        lease.enable = true;
+        lease.start_ip.addr = static_cast<uint32_t>(_local_ip) + (1 << 24);
+        lease.end_ip.addr = static_cast<uint32_t>(_local_ip) + (11 << 24);
+
+        tcpip_adapter_dhcps_option(
+            (tcpip_adapter_option_mode_t)TCPIP_ADAPTER_OP_SET,
+            (tcpip_adapter_option_id_t)TCPIP_ADAPTER_REQUESTED_IP_ADDRESS,
+            (void *)&lease, sizeof(dhcps_lease_t));
+
+        return tcpip_adapter_dhcps_start(TCPIP_ADAPTER_IF_AP) == ESP_OK;
+    }
+    return true;
+}
+
+
 
 /**
  * Configure access point
@@ -119,26 +201,10 @@ bool WiFiAPClass::softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress 
     }
 
     //esp_wifi_start();
+    _local_ip = local_ip;
+    _gateway = gateway;
+    _subnet = subnet;
 
-    tcpip_adapter_ip_info_t info;
-    info.ip.addr = static_cast<uint32_t>(local_ip);
-    info.gw.addr = static_cast<uint32_t>(gateway);
-    info.netmask.addr = static_cast<uint32_t>(subnet);
-    tcpip_adapter_dhcps_stop(TCPIP_ADAPTER_IF_AP);
-    if (tcpip_adapter_set_ip_info(TCPIP_ADAPTER_IF_AP, &info) == ESP_OK)
-    {
-        dhcps_lease_t lease;
-        lease.enable = true;
-        lease.start_ip.addr = static_cast<uint32_t>(local_ip) + (1 << 24);
-        lease.end_ip.addr = static_cast<uint32_t>(local_ip) + (11 << 24);
-
-        tcpip_adapter_dhcps_option(
-            (tcpip_adapter_option_mode_t)TCPIP_ADAPTER_OP_SET,
-            (tcpip_adapter_option_id_t)TCPIP_ADAPTER_REQUESTED_IP_ADDRESS,
-            (void *)&lease, sizeof(dhcps_lease_t));
-
-        return tcpip_adapter_dhcps_start(TCPIP_ADAPTER_IF_AP) == ESP_OK;
-    }
     return false;
 }
 
@@ -210,7 +276,7 @@ IPAddress WiFiAPClass::softAPIP()
         return IPAddress();
     }
     tcpip_adapter_get_ip_info(TCPIP_ADAPTER_IF_AP, &ip);
-    Serial.printf("ip %d %d\n\r", ip.ip, ip.ip.addr);
+
     return IPAddress(ip.ip.addr);
 }
 

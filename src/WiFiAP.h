@@ -37,7 +37,8 @@ class WiFiAPClass
 
 public:
 
-    bool softAP(const char* ssid, const char* passphrase = NULL, int channel = 11, int ssid_hidden = 0, int max_connection = 4);
+    bool softAP(const char* ssid, const char* passphrase, int channel = 11, int ssid_hidden = 0, int max_connection = 4);
+    bool softAP(const char *ssid, int channel = 11, int ssid_hidden = 0, int max_connection = 4);
     bool softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress subnet);
     bool softAPdisconnect(bool wifioff = false);
 
@@ -59,6 +60,10 @@ public:
     String softAPmacAddress(void);
 
 protected:
+private:
+    IPAddress _local_ip = IPAddress(192, 168, 1, 1);
+    IPAddress _gateway = IPAddress(192, 168, 1, 1);
+    IPAddress _subnet = IPAddress(255, 255, 255, 0);
 
 };
 
