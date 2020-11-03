@@ -166,11 +166,6 @@ wl_status_t WiFiSTAClass::begin(const char *ssid, const char *passphrase, int32_
     return status();
 }
 
-wl_status_t WiFiSTAClass::begin(const char *ssid, char *passphrase, int32_t channel, const uint8_t *bssid, bool connect)
-{
-    return begin((const char *)ssid, (const char *)passphrase, channel, bssid, connect);
-}
-
 /**
  * Use to connect to SDK config.
  * @return wl_status_t
