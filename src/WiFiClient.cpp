@@ -45,7 +45,7 @@ private:
             if(_fd < 0){
                 return 0;
             }
-            int res = lwip_available(_fd);
+            int res = fillBuffer();
             if(res < 0) {
                 _failed = true;
                 return 0;
