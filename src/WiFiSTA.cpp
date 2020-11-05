@@ -154,7 +154,7 @@ wl_status_t WiFiSTAClass::begin(const char *ssid, const char *passphrase, int32_
     }
     else
     {
-        tcpip_adapter_dhcpc_stop(TCPIP_ADAPTER_IF_STA);
+        tcpip_adapter_up(TCPIP_ADAPTER_IF_STA);
     }
 
     if (connect && (wifi_is_connected_to_ap() != RTW_SUCCESS))
@@ -252,7 +252,8 @@ bool WiFiSTAClass::reconnect()
 {
     if (WiFi.getMode() & WIFI_MODE_STA)
     {
-        if(wifi_disconnect() == RTW_SUCCESS) {
+        if (wifi_disconnect() == RTW_SUCCESS)
+        {
             return begin() != WL_CONNECT_FAILED;
         }
     }
@@ -267,19 +268,23 @@ bool WiFiSTAClass::reconnect()
 bool WiFiSTAClass::disconnect(bool wifioff, bool eraseap)
 {
 
-    if(WiFi.getMode() & WIFI_MODE_STA){
-        if(eraseap){
+    if (WiFi.getMode() & WIFI_MODE_STA)
+    {
+        if (eraseap)
+        {
             // memset(&conf, 0, sizeof(wifi_config_t));
             // if(esp_wifi_set_config(WIFI_IF_STA, &conf)){
             //     log_e("clear config failed!");
             // }
         }
-        if(wifi_disconnect() != RTW_SUCCESS){
+        if (wifi_disconnect() != RTW_SUCCESS)
+        {
             log_e("disconnect failed!");
             return false;
         }
-        if(wifioff) {
-             return WiFi.enableSTA(false);
+        if (wifioff)
+        {
+            return WiFi.enableSTA(false);
         }
         return true;
     }
@@ -355,14 +360,14 @@ bool WiFiSTAClass::config(IPAddress local_ip, IPAddress gateway, IPAddress subne
     {
         // Set DNS1-Server
         d.u_addr.ip4.addr = static_cast<uint32_t>(dns1);
-        dns_setserver(0, &d);
+        //dns_setserver(0, &d);
     }
 
     if (dns2 != (uint32_t)0x00000000)
     {
         // Set DNS2-Server
         d.u_addr.ip4.addr = static_cast<uint32_t>(dns2);
-        dns_setserver(1, &d);
+        //dns_setserver(1, &d);
     }
 
     return true;
@@ -467,7 +472,7 @@ IPAddress WiFiSTAClass::localIP()
  */
 uint8_t *WiFiSTAClass::macAddress(uint8_t *mac)
 {
-    if(WiFiGenericClass::getMode() != WIFI_MODE_NULL)
+    if (WiFiGenericClass::getMode() != WIFI_MODE_NULL)
     {
         String macStr = macAddress();
         for (int i = 0; i < 6; i++)
@@ -535,8 +540,9 @@ IPAddress WiFiSTAClass::dnsIP(uint8_t dns_no)
     {
         return IPAddress();
     }
-    ip_addr_t dns_ip = dns_getserver(dns_no);
-    return IPAddress(dns_ip.u_addr.ip4.addr);
+    // ip_addr_t dns_ip = dns_getserver(dns_no);
+    // return IPAddress(dns_ip.u_addr.ip4.addr);
+    return IPAddress();
 }
 
 /**
@@ -625,11 +631,13 @@ String WiFiSTAClass::psk() const
 uint8_t *WiFiSTAClass::BSSID(void)
 {
     static uint8_t bssid[6];
-    if(WiFiGenericClass::getMode() == WIFI_MODE_NULL){
+    if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
+    {
         return NULL;
     }
-    if(!wifi_get_ap_bssid(bssid)) {
-        return reinterpret_cast<uint8_t*>(bssid);
+    if (!wifi_get_ap_bssid(bssid))
+    {
+        return reinterpret_cast<uint8_t *>(bssid);
     }
     return NULL;
 }
@@ -661,7 +669,8 @@ int8_t WiFiSTAClass::RSSI(void)
         return 0;
     }
     int rssi = 0;
-    if(wifi_get_rssi(&rssi) == RTW_SUCCESS) {
+    if (wifi_get_rssi(&rssi) == RTW_SUCCESS)
+    {
         return rssi;
     }
     return 0;
@@ -719,10 +728,12 @@ bool WiFiSTAClass::enableIpV6()
 IPv6Address WiFiSTAClass::localIPv6()
 {
     static ip6_addr_t addr;
-    if(WiFiGenericClass::getMode() == WIFI_MODE_NULL){
+    if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
+    {
         return IPv6Address();
     }
-    if(tcpip_adapter_get_ip6_linklocal(TCPIP_ADAPTER_IF_STA, &addr)){
+    if (tcpip_adapter_get_ip6_linklocal(TCPIP_ADAPTER_IF_STA, &addr))
+    {
         return IPv6Address();
     }
     return IPv6Address(addr.addr);
