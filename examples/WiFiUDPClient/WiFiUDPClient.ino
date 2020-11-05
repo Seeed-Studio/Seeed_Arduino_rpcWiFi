@@ -2,7 +2,7 @@
  *  This sketch sends random data over UDP on a ESP32 device
  *
  */
-#include <WiFi.h>
+#include <rpcWiFi.h>
 #include <WiFiUdp.h>
 
 // WiFi network name and password:

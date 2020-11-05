@@ -3,7 +3,7 @@
  *
  */
 
-#include <WiFi.h>
+#include <rpcWiFi.h>
 #include <WiFiMulti.h>
 
 WiFiMulti wifiMulti;

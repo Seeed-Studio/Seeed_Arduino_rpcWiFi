@@ -12,7 +12,7 @@
 */
 
 #include <rpcWiFi.h>
-#include <WiFiClient.h>
+#include <rpcWiFiClient.h>
 #include <WiFiAP.h>
 
 #define LED_BUILTIN 2   // Set the GPIO pin where you connected your test LED or comment this line out if your dev board has a built-in LED

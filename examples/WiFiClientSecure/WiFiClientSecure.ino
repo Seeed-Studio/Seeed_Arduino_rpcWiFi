@@ -6,7 +6,7 @@
   2017 - Evandro Copercini - Apache 2.0 License.
 */
 
-#include <WiFiClientSecure.h>
+#include <rpcWiFiClientSecure.h>
 
 const char* ssid     = "your-ssid";     // your network SSID (name of wifi network)
 const char* password = "your-password"; // your network password
