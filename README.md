@@ -1,40 +1,18 @@
-# Seeed_Arduino_rpcWiFi
 
-## **Introduction**
 
-Seeed_Arduino_rpcWiFi library supports to Wio terminal WIFI function. it can enable the Wio terminal to connect the WIFI for reading or receive the data from the internet, for example, the Wio terminal can do the action via a link with some of the cloud, receive a message from the website, etc. 
+ [![Build Status](https://travis-ci.com/Seeed-Studio/Seeed_Arduino_rpcWiFi.svg?branch=master)](https://travis-ci.com/Seeed-Studio/Seeed_Arduino_rpcWiFi)
 
-### **Installation**
-
-Before you use rpcwifi library, please check your firmware is the latest version.
-
-This is the [**Latest frimware**](https://wiki.seeedstudio.com/Wio-Terminal-Network-Overview/) installation guide link.
-
+Seeed Arduino rpcWiFi software library calls Seeed Arduino rpcUnified to implement WiFi function compatibility with Arduino-ESP32. To reduce the cost of using the software, you can import your favorite ESP32 wifi app directly, with minor changes, and then use it. You'll find that your favorite ESP32 app has 5G features, runs on ARM and other architectures.  Hope you like this software and let us know if you have any feedback.
 
 ### **Feature**
 
-- Powerful Wireless Connectivity
+- Maximum Compatible with ESP32 wifi library
 - Powered by Realtek RTL8720DN
 - Dual Band 2.4Ghz / 5Ghz Wi-Fi (802.11 a/b/g/n)
 - low power consumption
 
 
-### **rpcWiFi example**
-
-In the Seeed_Arduino_rpcWiFi library, we has been developed as below function:
-
-- SimpleWiFiServer
-- WiFiAccessPoint
-- WiFiClient
-- WiFiClientBasic
-- WiFiClientEnterprise
-- WiFiClientEvents
-- WiFiClientSecure
-- WiFiClientStaticIP
-- WiFiMulti
-- WiFiScan
-- WiFiTelnetToSerial
-- WiFiUDPClient
+[**More detailed documentation**](https://wiki.seeedstudio.com/Wio-Terminal-Wi-Fi/)
 
 ## **License**
 
@@ -42,4 +20,3 @@ This software is written by seeed studio and is licensed under The MIT License. 
 
 Contributing to this software is warmly welcomed. You can do this basically by forking, committing modifications and then pulling requests (follow the links above for operating guide). Adding change log and your contact into file header is encouraged. Thanks for your contribution.
 
-Seeed Studio is an open hardware facilitation company based in Shenzhen, China. Benefiting from local manufacture power and convenient global logistic system, we integrate resources to serve new era of innovation. Seeed also works with global distributors and partners to push open hardware movement.
