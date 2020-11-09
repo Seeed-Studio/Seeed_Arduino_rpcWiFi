@@ -25,6 +25,8 @@
 
 #include "seeed_rpcUnified.h"
 #include "rtl_wifi/wifi_unified.h"
+#undef max
+#undef min
 #include <functional>
 #include "WiFiType.h"
 

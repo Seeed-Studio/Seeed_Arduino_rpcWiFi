@@ -23,6 +23,8 @@
 
 #include "Arduino.h"
 #include "Client.h"
+#undef max
+#undef min
 #include <memory>
 
 class WiFiClientSocketHandle;
