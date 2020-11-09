@@ -393,7 +393,6 @@ int WiFiClientSecure::available()
 
 uint8_t WiFiClientSecure::connected()
 {
-    uint8_t dummy = 0;
 
     uint32_t interval = millis() - conn_staus;
     if (_connected && interval > WIFI_CLIENT_SECURE_KEEPALIVE_TIMEOUT)

@@ -117,7 +117,7 @@ void WiFiUDP::stop(){
     setsockopt(udp_server, IPPROTO_IP, IP_DROP_MEMBERSHIP, &mreq, sizeof(mreq));
     multicast_ip = IPAddress(INADDR_ANY);
   }
-  close(udp_server);
+  closesocket(udp_server);
   udp_server = -1;
 }
 
