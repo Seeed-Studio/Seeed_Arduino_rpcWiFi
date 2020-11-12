@@ -383,6 +383,19 @@ bool WiFiSTAClass::isConnected()
 }
 
 /**
+ * Clear STA Connected Setting
+ * @return true if clear action done
+ */
+bool WiFiSTAClass::clearConnectedSetting()
+{
+    if(wifi_clear_reconnect_data() == 0){
+        return false;
+    }else{
+        return true;
+    }
+}
+
+/**
  * Setting the ESP32 station to connect to the AP (which is recorded)
  * automatically or not when powered on. Enable auto-connect by default.
  * @param autoConnect bool
