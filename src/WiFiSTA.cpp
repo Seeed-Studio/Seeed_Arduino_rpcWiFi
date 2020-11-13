@@ -75,6 +75,10 @@ wl_status_t WiFiSTAClass::status()
     {
         return _sta_status;
     }
+    if(wifi_is_connected_to_ap() != RTW_SUCCESS)
+    {
+        _setStatus(WL_DISCONNECTED);
+    }
     return (wl_status_t)xEventGroupClearBits(_sta_status_group, 0);
 }
 
