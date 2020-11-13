@@ -214,9 +214,9 @@ void WiFiClientSecure::stop()
         _socket = -1;
         _connected = false;
     }
-    stop_ssl_socket(sslclient, _CA_cert, _cert, _private_key);
     if (sslclient != NULL)
     {
+        stop_ssl_socket(sslclient, _CA_cert, _cert, _private_key);
         ssl_client_destroy(sslclient);
         sslclient = NULL;
     }
