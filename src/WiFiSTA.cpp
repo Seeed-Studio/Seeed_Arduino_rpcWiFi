@@ -595,14 +595,14 @@ uint8_t WiFiSTAClass::subnetCIDR()
  * @return SSID
  */
 String WiFiSTAClass::SSID() const
-{
+{  
     if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
     {
         return String();
     }
     rtw_bss_info_t ap_info;
     rtw_security_t security;
-    if (!wifi_get_ap_info(&ap_info, &security))
+    if (wifi_get_ap_info(&ap_info, &security) == RTW_SUCCESS)
     {
         return String(reinterpret_cast<char *>(ap_info.SSID));
     }
