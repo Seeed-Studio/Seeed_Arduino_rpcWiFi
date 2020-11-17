@@ -45,6 +45,7 @@ public:
     bool disconnect(bool wifioff = false, bool eraseap = false);
 
     bool isConnected();
+    bool clearConnectedSetting();
 
     bool setAutoConnect(bool autoConnect);
     bool getAutoConnect();
