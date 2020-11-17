@@ -12,7 +12,7 @@ before_install:
 script:
    - chmod +x seeed-arduino-ci.sh
    - cat $PWD/seeed-arduino-ci.sh
-   - bash $PWD/seeed-arduino-ci.sh -b "Seeeduino:samd:seeed_wio_terminal" -s SimpleWiFiServer/WiFiAccessPoint/WiFiClient/WiFiClientBasic/WiFiClientEvents/WiFiClientSecure/WiFiMulti/WiFiScan/WiFiUDPClient  Seeed-Studio/Seeed_Arduino_rpcUnified.git
+   - bash $PWD/seeed-arduino-ci.sh -b "Seeeduino:samd:seeed_wio_terminal" -s SimpleWiFiServer/WiFiAccessPoint/WiFiClient/WiFiClientBasic/WiFiClientEvents/WiFiClientSecure/WiFiMulti/WiFiScan/WiFiUDPClient/CaptivePortal/Authorization/BasicHttpClient/BasicHttpsClient/ReuseConnection/StreamHttpClient  Seeed-Studio/Seeed_Arduino_rpcUnified.git
 
 notifications:
   email:
