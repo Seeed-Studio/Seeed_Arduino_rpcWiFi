@@ -7,12 +7,12 @@ cache:
     - ~/.arduino15/packages/
 
 before_install:
-  - wget -c https://files.seeedstudio.com/arduino/seeed-arduino-ci.sh
+  - wget -c https://files.seeedstudio.com/arduino/seeed-arduino-simple-ci.sh
 
 script:
-   - chmod +x seeed-arduino-ci.sh
-   - cat $PWD/seeed-arduino-ci.sh
-   - bash $PWD/seeed-arduino-ci.sh -b "Seeeduino:samd:seeed_wio_terminal" -s SimpleWiFiServer/WiFiAccessPoint/WiFiClient/WiFiClientBasic/WiFiClientEvents/WiFiClientSecure/WiFiMulti/WiFiScan/WiFiUDPClient/CaptivePortal/Authorization/BasicHttpClient/BasicHttpsClient/ReuseConnection/StreamHttpClient/AdvancedWebServer/HelloServer/HttpAdvancedAuth/HttpBasicAuth/PathArgServer/SDWebServer/SimpleAuthentification  Seeed-Studio/Seeed_Arduino_rpcUnified.git Seeed-Studio/Seeed_Arduino_FS.git "Seeed-Studio/Seeed_Arduino_mbedtls.git -b dev"
+   - chmod +x seeed-arduino-simple-ci.sh
+   - cat $PWD/seeed-arduino-simple-ci.sh
+   - bash $PWD/seeed-arduino-simple-ci.sh -b "Seeeduino:samd:seeed_wio_terminal" -s SimpleWiFiServer/WiFiAccessPoint/WiFiClient/WiFiClientBasic/WiFiClientEvents/WiFiClientSecure/WiFiMulti/WiFiScan/WiFiUDPClient/CaptivePortal/Authorization/BasicHttpClient/BasicHttpsClient/ReuseConnection/StreamHttpClient/AdvancedWebServer/HelloServer/HttpAdvancedAuth/HttpBasicAuth/PathArgServer/SDWebServer/SimpleAuthentification  Seeed-Studio/Seeed_Arduino_rpcUnified.git Seeed-Studio/Seeed_Arduino_FS.git Seeed-Studio/Seeed_Arduino_SFUD "Seeed-Studio/Seeed_Arduino_mbedtls.git -b dev"
 
 notifications:
   email:
