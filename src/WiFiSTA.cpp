@@ -204,12 +204,12 @@ wl_status_t WiFiSTAClass::begin()
     pscan_config = PSCAN_ENABLE | PSCAN_FAST_SURVEY;
     key_id = atoi((const char *)key_id_str);
 
-    ret = wifi_set_pscan_chan((uint8_t *)&channel, &pscan_config, 1);
-    if (ret < 0)
-    {
-        log_e("connect failed!");
-        return WL_CONNECT_FAILED;
-    }
+    // ret = wifi_set_pscan_chan((uint8_t *)&channel, &pscan_config, 1);
+    // if (ret < 0)
+    // {
+    //     log_e("connect failed!");
+    //     return WL_CONNECT_FAILED;
+    // }
 
     if (security_type == RTW_SECURITY_OPEN)
     {
