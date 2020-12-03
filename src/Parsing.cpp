@@ -86,6 +86,11 @@ bool WebServer::_parseRequest(WiFiClient& client) {
   String methodStr = req.substring(0, addr_start);
   String url = req.substring(addr_start + 1, addr_end);
   String versionEnd = req.substring(addr_end + 8);
+  // Parse for Android Captive Portal
+  if (req.indexOf("/generate_204") != -1)
+  {
+    url = "/generate_204";
+  }
   _currentVersion = atoi(versionEnd.c_str());
   String searchStr = "";
   int hasSearch = url.indexOf('?');
