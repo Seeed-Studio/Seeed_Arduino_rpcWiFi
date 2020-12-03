@@ -218,6 +218,8 @@ void WiFiClientSecure::stop()
     {
         stop_ssl_socket(sslclient, _CA_cert, _cert, _private_key);
         ssl_client_destroy(sslclient);
+        _rxBuffer.reset();
+        _rxBuffer = NULL;
         sslclient = NULL;
     }
 }

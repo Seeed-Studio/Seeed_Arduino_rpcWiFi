@@ -199,6 +199,7 @@ WiFiClient & WiFiClient::operator=(const WiFiClient &other)
 void WiFiClient::stop()
 {
     clientSocketHandle = NULL;
+    _rxBuffer.reset();
     _rxBuffer = NULL;
     _connected = false;
 }
