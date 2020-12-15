@@ -357,21 +357,20 @@ bool WiFiSTAClass::config(IPAddress local_ip, IPAddress gateway, IPAddress subne
         _useStaticIp = false;
     }
 
-    ip_addr_t d;
-    d.type = IPADDR_TYPE_V4;
-
     if (dns1 != (uint32_t)0x00000000)
     {
         // Set DNS1-Server
-        d.u_addr.ip4.addr = static_cast<uint32_t>(dns1);
-        //dns_setserver(0, &d);
+        tcpip_adapter_dns_info_t tcpip_dns0;
+        tcpip_dns0.ipv4 = dns1;
+        tcpip_adapter_set_dns_info(TCPIP_ADAPTER_IF_MAX,TCPIP_ADAPTER_DNS_MAIN,&tcpip_dns0);
     }
 
     if (dns2 != (uint32_t)0x00000000)
     {
         // Set DNS2-Server
-        d.u_addr.ip4.addr = static_cast<uint32_t>(dns2);
-        //dns_setserver(1, &d);
+        tcpip_adapter_dns_info_t tcpip_dns1;
+        tcpip_dns1.ipv4 = dns2;
+        tcpip_adapter_set_dns_info(TCPIP_ADAPTER_IF_MAX,TCPIP_ADAPTER_DNS_BACKUP,&tcpip_dns1);
     }
 
     return true;
@@ -557,9 +556,16 @@ IPAddress WiFiSTAClass::dnsIP(uint8_t dns_no)
     {
         return IPAddress();
     }
-    // ip_addr_t dns_ip = dns_getserver(dns_no);
-    // return IPAddress(dns_ip.u_addr.ip4.addr);
-    return IPAddress();
+
+    tcpip_adapter_dns_info_t tcpip_dns_ip;
+
+    if(dns_no == TCPIP_ADAPTER_DNS_MAIN){
+        tcpip_adapter_get_dns_info(TCPIP_ADAPTER_IF_MAX,TCPIP_ADAPTER_DNS_MAIN,&tcpip_dns_ip);
+        return IPAddress(tcpip_dns_ip.ipv4);
+    }else{
+        tcpip_adapter_get_dns_info(TCPIP_ADAPTER_IF_MAX,TCPIP_ADAPTER_DNS_BACKUP,&tcpip_dns_ip);
+        return IPAddress(tcpip_dns_ip.ipv4);
+    }
 }
 
 /**
