@@ -622,13 +622,13 @@ String WiFiSTAClass::SSID() const
     if(WiFiGenericClass::getMode() == WIFI_MODE_APSTA)
     {
         rtw_wifi_setting_t wifi_setting;
-        wifi_get_setting(WIFI_WLAN1_NAME,&wifi_setting);
+        wifi_get_setting(WLAN1_NAME,&wifi_setting);
         return String(reinterpret_cast<char *>(wifi_setting.ssid));
     }
     else if(WiFiGenericClass::getMode() == WIFI_MODE_STA)
     {
         rtw_wifi_setting_t wifi_setting;
-        wifi_get_setting(WIFI_WLAN0_NAME,&wifi_setting);
+        wifi_get_setting(WLAN0_NAME,&wifi_setting);
         return String(reinterpret_cast<char *>(wifi_setting.ssid));
     }
 

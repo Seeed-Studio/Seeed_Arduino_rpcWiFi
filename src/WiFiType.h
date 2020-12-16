@@ -36,9 +36,6 @@
 #define WiFiEventInfo_t system_event_info_t
 #define WiFiEventId_t wifi_event_id_t
 
-#define WIFI_WLAN0_NAME "wlan0"
-#define WIFI_WLAN1_NAME "wlan1"
-
 typedef enum {
     WL_NO_SHIELD        = 255,   // for compatibility with WiFi Shield library
     WL_IDLE_STATUS      = 0,
