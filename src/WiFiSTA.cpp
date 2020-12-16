@@ -619,16 +619,19 @@ uint8_t WiFiSTAClass::subnetCIDR()
  */
 String WiFiSTAClass::SSID() const
 {  
-    if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
+    if(WiFiGenericClass::getMode() == WIFI_MODE_APSTA)
     {
-        return String();
+        rtw_wifi_setting_t wifi_setting;
+        wifi_get_setting(WIFI_WLAN1_NAME,&wifi_setting);
+        return String(reinterpret_cast<char *>(wifi_setting.ssid));
     }
-    rtw_bss_info_t ap_info;
-    rtw_security_t security;
-    if (wifi_get_ap_info(&ap_info, &security) == RTW_SUCCESS)
+    else if(WiFiGenericClass::getMode() == WIFI_MODE_STA)
     {
-        return String(reinterpret_cast<char *>(ap_info.SSID));
+        rtw_wifi_setting_t wifi_setting;
+        wifi_get_setting(WIFI_WLAN0_NAME,&wifi_setting);
+        return String(reinterpret_cast<char *>(wifi_setting.ssid));
     }
+
     return String();
 }
 
