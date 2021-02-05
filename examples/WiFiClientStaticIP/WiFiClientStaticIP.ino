@@ -20,11 +20,7 @@ IPAddress secondaryDNS(8, 8, 4, 4); //optional
 void setup()
 {
   Serial.begin(115200);
-
-  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
-    Serial.println("STA Failed to configure");
-  }
-
+     
   Serial.print("Connecting to ");
   Serial.println(ssid);
 
@@ -33,8 +29,12 @@ void setup()
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
+  } 
+     
+  if (!WiFi.config(local_IP, gateway, subnet, primaryDNS, secondaryDNS)) {
+    Serial.println("STA Failed to configure");
   }
-
+     
   Serial.println("");
   Serial.println("WiFi connected!");
   Serial.print("IP address: ");
