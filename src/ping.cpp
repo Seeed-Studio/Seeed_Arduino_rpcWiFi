@@ -210,9 +210,9 @@ static void ping_recv(int s) {
                 }
 
                 // Print ...
-//                log_d("%d bytes from %s: icmp_seq=%d time=%.3f ms\r\n", len, ipa,
-//                      ntohs(iecho->seqno), elapsed
-//                );
+               rpc_printf("%d bytes from %s: icmp_seq=%d time=%.3f ms\r\n", len, ipa,
+                     ntohs(iecho->seqno), elapsed
+               );
 
                 return;
             }
@@ -328,11 +328,11 @@ bool ping_start(IPAddress adr, int count=0, int interval=0, int size=0, int time
 
     closesocket(s);
 
-//    log_i("%d packets transmitted, %d packets received, %.1f%% packet loss\r\n",
-//          transmitted,
-//          received,
-//          ((((float)transmitted - (float)received) / (float)transmitted) * 100.0)
-//    );
+   rpc_printf("%d packets transmitted, %d packets received, %.1f%% packet loss\r\n",
+         transmitted,
+         received,
+         ((((float)transmitted - (float)received) / (float)transmitted) * 100.0)
+   );
     
     
     if (ping_o) {

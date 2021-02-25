@@ -3,6 +3,7 @@
 #ifndef PING_H
 #define PING_H
 #include <Arduino.h>
+#include <WiFi.h>
 
 typedef void(*ping_recv_function)(void* arg, void *pdata);
 typedef void(*ping_sent_function)(void* arg, void *pdata);
