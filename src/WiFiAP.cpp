@@ -216,7 +216,6 @@ bool WiFiAPClass::softAPConfig(IPAddress local_ip, IPAddress gateway, IPAddress 
 bool WiFiAPClass::softAPdisconnect(bool wifioff)
 {
     bool ret;
-    wifi_config_t conf;
 
     if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
     {
@@ -243,7 +242,6 @@ bool WiFiAPClass::softAPdisconnect(bool wifioff)
  */
 uint8_t WiFiAPClass::softAPgetStationNum()
 {
-    wifi_sta_list_t clients;
     if (WiFiGenericClass::getMode() == WIFI_MODE_NULL)
     {
         return 0;
@@ -374,6 +372,7 @@ const char *WiFiAPClass::softAPgetHostname()
     {
         return hostname;
     }
+    return NULL;
 }
 
 /**
