@@ -190,26 +190,10 @@ wl_status_t WiFiSTAClass::begin()
         return WL_CONNECT_FAILED;
     }
 
-    uint32_t channel;
-    uint32_t security_type;
-    uint8_t pscan_config;
-    char key_id_str[2] = {0};
-    int key_id = -1;
     int ret;
 
-    channel = wifi_info.channel;
-    sprintf(key_id_str, "%d", (char)(channel >> 28));
-    channel &= 0xff;
-    security_type = wifi_info.security_type;
-    pscan_config = PSCAN_ENABLE | PSCAN_FAST_SURVEY;
-    key_id = atoi((const char *)key_id_str);
-
-    // ret = wifi_set_pscan_chan((uint8_t *)&channel, &pscan_config, 1);
-    // if (ret < 0)
-    // {
-    //     log_e("connect failed!");
-    //     return WL_CONNECT_FAILED;
-    // }
+    const uint32_t security_type = wifi_info.security_type;
+    const int key_id = (char)(wifi_info.channel >> 28);
 
     if (security_type == RTW_SECURITY_OPEN)
     {

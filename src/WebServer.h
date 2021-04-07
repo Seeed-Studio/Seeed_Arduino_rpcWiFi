@@ -138,7 +138,6 @@ public:
     _streamFileCore(file.size(), file.name(), contentType);
     uint8_t buffer[512];
     uint32_t remain = file.size();
-    uint32_t size = file.size();
     uint16_t bytesToWrite = 0;
     uint32_t count = 0;
 

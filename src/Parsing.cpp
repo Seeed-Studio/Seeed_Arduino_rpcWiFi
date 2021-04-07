@@ -313,7 +313,7 @@ int WebServer::_uploadReadByte(WiFiClient& client){
   if(res < 0) {
     // keep trying until you either read a valid byte or timeout
     unsigned long startMillis = millis();
-    long timeoutIntervalMillis = client.getTimeout();
+    unsigned long timeoutIntervalMillis = client.getTimeout();
     boolean timedOut = false;
     for(;;) {
       // loosely modeled after blinkWithoutDelay pattern

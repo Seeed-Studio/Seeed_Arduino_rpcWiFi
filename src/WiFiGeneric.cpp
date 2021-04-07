@@ -466,7 +466,6 @@ esp_err_t WiFiGenericClass::_eventCallback(void *arg, system_event_t *event)
     }
     else if (event->event_id == SYSTEM_EVENT_AP_STADISCONNECTED)
     {
-        wifi_sta_list_t clients;
         if (WiFi.softAPgetStationNum() == 0)
         {
             clearStatusBits(AP_HAS_CLIENT_BIT);
@@ -681,7 +680,6 @@ bool WiFiGenericClass::setSleep(bool enable)
  */
 bool WiFiGenericClass::getSleep()
 {
-    wifi_ps_type_t ps;
     if ((getMode() & WIFI_MODE_STA) == 0)
     {
         log_w("STA has not been started");
