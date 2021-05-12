@@ -34,6 +34,7 @@
 #include <rpcWiFi.h>
 #include <WiFiClient.h>
 #include <WiFiClientSecure.h>
+#include <StreamString.h>
 
 #define HTTPCLIENT_DEFAULT_TCP_TIMEOUT (5000)
 
@@ -211,7 +212,7 @@ public:
     WiFiClient& getStream(void);
     WiFiClient* getStreamPtr(void);
     int writeToStream(Stream* stream);
-    String getString(void);
+    StreamString getString(void);
 
     static String errorToString(int error);
 

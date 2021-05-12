@@ -34,7 +34,6 @@
 #include <WiFiClientSecure.h>
 #endif
 
-#include <StreamString.h>
 #include <base64.h>
 
 #include "HTTPClient.h"
@@ -919,7 +918,7 @@ int HTTPClient::writeToStream(Stream * stream)
  * return all payload as String (may need lot of ram or trigger out of memory!)
  * @return String
  */
-String HTTPClient::getString(void)
+StreamString HTTPClient::getString(void)
 {
     // _size can be -1 when Server sends no Content-Length header
     if(_size > 0 || _size == -1) {
@@ -934,7 +933,7 @@ String HTTPClient::getString(void)
         }
     }
 
-    return "";
+    return StreamString();
 }
 
 /**
