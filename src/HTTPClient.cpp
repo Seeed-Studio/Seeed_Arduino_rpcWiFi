@@ -578,11 +578,9 @@ int HTTPClient::sendRequest(const char * type, uint8_t * payload, size_t size)
 
         // send Payload if needed
         if(payload && size > 0) {
-            // Send in chunks of 1024 bytes
-            const size_t chunk_size = 1024;
-            
-            for (size_t pos = 0; pos < size; pos += chunk_size) {
-                size_t to_write = min(1024, size - pos);
+            // Send in chunks of HTTP_TCP_BUFFER_SIZE bytes            
+            for (size_t pos = 0; pos < size; pos += HTTP_TCP_BUFFER_SIZE) {
+                size_t to_write = min(HTTP_TCP_BUFFER_SIZE, size - pos);
                 if(_client->write(&payload[pos], to_write) != to_write) {
                     return returnError(HTTPC_ERROR_SEND_PAYLOAD_FAILED);
                 }
