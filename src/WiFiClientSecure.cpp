@@ -174,6 +174,7 @@ WiFiClientSecure::WiFiClientSecure()
     _pskIdent = NULL;
     _psKey = NULL;
     next = NULL;
+    sslclient = NULL;
 }
 
 WiFiClientSecure::WiFiClientSecure(int sock)
@@ -191,6 +192,7 @@ WiFiClientSecure::WiFiClientSecure(int sock)
     _pskIdent = NULL;
     _psKey = NULL;
     next = NULL;
+    sslclient = NULL;
 }
 
 WiFiClientSecure::~WiFiClientSecure()
