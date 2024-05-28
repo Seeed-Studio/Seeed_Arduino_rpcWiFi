@@ -481,9 +481,9 @@ void WiFiClient::flush() {
     }
     while(a){
         toRead = (a>WIFI_CLIENT_FLUSH_BUFFER_SIZE)?WIFI_CLIENT_FLUSH_BUFFER_SIZE:a;
-        res = recv(fd(), buf, toRead, MSG_DONTWAIT);
+        res = _rxBuffer->read(buf, toRead);
         if(res < 0) {
-            log_e("fail on fd %d, errno: %d, \"%s\"", fd(), errno, strerror(errno));
+            log_e("Read failed even though still data available");
             stop();
             break;
         }
