@@ -266,7 +266,9 @@ int WiFiUDP::peek(){
   return rx_buffer->peek();
 }
 
-void WiFiUDP::flush(){
+void WiFiUDP::flush(){}
+
+void WiFiUDP::clear(){
   if(!rx_buffer) return;
   cbuf *b = rx_buffer;
   rx_buffer = 0;

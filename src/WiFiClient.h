@@ -63,6 +63,7 @@ public:
     int read(uint8_t *buf, size_t size);
     int peek();
     void flush();
+    void clear();
     void stop();
     uint8_t connected();
 

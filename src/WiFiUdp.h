@@ -70,6 +70,7 @@ public:
   int read(char* buffer, size_t len);
   int peek();
   void flush();
+  void clear();
   IPAddress remoteIP();
   uint16_t remotePort();
 };
